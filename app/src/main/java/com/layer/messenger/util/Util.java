@@ -35,7 +35,6 @@ public class Util {
     private static ImageCacheWrapper sImageCacheWrapper;
     private static IdentityFormatter sIdentityFormatter;
     private static DateFormatter sDateFormatter;
-    private static EmptyListMessageFormatter sEmptyListMessageFormatter;
 
     public static void init(Context context, LayerClient layerClient, Picasso picasso) {
         DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(context);
@@ -97,12 +96,5 @@ public class Util {
             sIdentityFormatter = new IdentityFormatterImpl(context);
         }
         return sIdentityFormatter;
-    }
-
-    public static EmptyListMessageFormatter getEmptyListMessageFormatter() {
-        if (sEmptyListMessageFormatter == null) {
-            sEmptyListMessageFormatter = new EmptyListMessageFormatterImpl();
-        }
-        return sEmptyListMessageFormatter;
     }
 }
