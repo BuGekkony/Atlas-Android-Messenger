@@ -7,6 +7,8 @@ import com.layer.sdk.LayerClient;
 import com.layer.ui.conversationitem.ConversationItemFormatter;
 import com.layer.ui.identity.IdentityFormatter;
 import com.layer.ui.identity.IdentityFormatterImpl;
+import com.layer.ui.message.EmptyListMessageFormatter;
+import com.layer.ui.message.EmptyListMessageFormatterImpl;
 import com.layer.ui.message.messagetypes.CellFactory;
 import com.layer.ui.message.messagetypes.generic.GenericCellFactory;
 import com.layer.ui.message.messagetypes.location.LocationCellFactory;
@@ -25,9 +27,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Util {
     private static ConversationItemFormatter sConversationItemFormatter;
@@ -35,6 +35,7 @@ public class Util {
     private static ImageCacheWrapper sImageCacheWrapper;
     private static IdentityFormatter sIdentityFormatter;
     private static DateFormatter sDateFormatter;
+    private static EmptyListMessageFormatter sEmptyListMessageFormatter;
 
     public static void init(Context context, LayerClient layerClient, Picasso picasso) {
         DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(context);
@@ -96,5 +97,12 @@ public class Util {
             sIdentityFormatter = new IdentityFormatterImpl(context);
         }
         return sIdentityFormatter;
+    }
+
+    public static EmptyListMessageFormatter getEmptyListMessageFormatter() {
+        if (sEmptyListMessageFormatter == null) {
+            sEmptyListMessageFormatter = new EmptyListMessageFormatterImpl();
+        }
+        return sEmptyListMessageFormatter;
     }
 }
