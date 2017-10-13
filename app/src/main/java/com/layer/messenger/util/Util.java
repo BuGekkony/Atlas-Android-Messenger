@@ -7,8 +7,6 @@ import com.layer.sdk.LayerClient;
 import com.layer.ui.conversationitem.ConversationItemFormatter;
 import com.layer.ui.identity.IdentityFormatter;
 import com.layer.ui.identity.IdentityFormatterImpl;
-import com.layer.ui.message.EmptyListMessageFormatter;
-import com.layer.ui.message.EmptyListMessageFormatterImpl;
 import com.layer.ui.message.messagetypes.CellFactory;
 import com.layer.ui.message.messagetypes.generic.GenericCellFactory;
 import com.layer.ui.message.messagetypes.location.LocationCellFactory;

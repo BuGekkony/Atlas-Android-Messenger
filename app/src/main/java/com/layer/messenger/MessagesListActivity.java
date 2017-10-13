@@ -33,6 +33,7 @@ import com.layer.ui.AddressBar;
 import com.layer.ui.composebar.ComposeBar;
 import com.layer.ui.conversation.ConversationView;
 import com.layer.ui.conversation.ConversationViewModel;
+import com.layer.ui.message.EmptyMessageListView;
 import com.layer.ui.message.MessageItemsListViewModel;
 import com.layer.ui.message.messagetypes.location.LocationSender;
 import com.layer.ui.message.messagetypes.text.TextSender;
@@ -215,44 +216,49 @@ public class MessagesListActivity extends AppCompatActivity {
 
     private void setupConversation(Conversation conversation) {
         mConversationView = mActivityMessagesListBinding.conversation;
+        EmptyMessageListView emptyMessageListView = new EmptyMessageListView(this);
+        mConversationView.setEmptyListView(emptyMessageListView, emptyMessageListView.getmEmptyTextViewResourceId());
+
+        View emptyMessageView = new EmptyMessageListView(this);
         mMessageItemsListViewModel = new MessageItemsListViewModel(this, App.getLayerClient(),
-                Util.getImageCacheWrapper(), Util.getDateFormatter(this), Util.getIdentityFormatter(this));
+                Util.getImageCacheWrapper(), Util.getDateFormatter(this),
+                Util.getIdentityFormatter(this));
 
-        mConversationViewModel = new ConversationViewModel(getApplicationContext(), App.getLayerClient(),
-                Util.getCellFactories(App.getLayerClient()), Util.getImageCacheWrapper(),
-                Util.getDateFormatter(getApplicationContext()), Util.getIdentityFormatter(this),
-                new SwipeableItem.OnItemSwipeListener<Message>() {
-                    @Override
-                    public void onSwipe(final Message message, int direction) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MessagesListActivity.this)
-                                .setMessage(R.string.alert_message_delete_message)
-                                .setNegativeButton(R.string.alert_button_cancel, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // TODO: simply update this one message
-                                        mMessageItemsListViewModel.getAdapter().notifyDataSetChanged();
-                                        dialog.dismiss();
-                                    }
-                                })
+        mMessageItemsListViewModel.setCellFactories( Util.getCellFactories(App.getLayerClient()));
+        mMessageItemsListViewModel.setOnItemSwipeListener(new SwipeableItem.OnItemSwipeListener<Message>() {
+            @Override
+            public void onSwipe(final Message message, int direction) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MessagesListActivity.this)
+                        .setMessage(R.string.alert_message_delete_message)
+                        .setNegativeButton(R.string.alert_button_cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO: simply update this one message
+                                mMessageItemsListViewModel.getAdapter().notifyDataSetChanged();
+                                dialog.dismiss();
+                            }
+                        })
 
-                                .setPositiveButton(R.string.alert_button_delete_all_participants, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        message.delete(LayerClient.DeletionMode.ALL_PARTICIPANTS);
-                                    }
-                                });
-                        // User delete is only available if read receipts are enabled
-                        if (message.getConversation().isReadReceiptsEnabled()) {
-                            builder.setNeutralButton(R.string.alert_button_delete_my_devices, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    message.delete(LayerClient.DeletionMode.ALL_MY_DEVICES);
-                                }
-                            });
+                        .setPositiveButton(R.string.alert_button_delete_all_participants, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                message.delete(LayerClient.DeletionMode.ALL_PARTICIPANTS);
+                            }
+                        });
+                // User delete is only available if read receipts are enabled
+                if (message.getConversation().isReadReceiptsEnabled()) {
+                    builder.setNeutralButton(R.string.alert_button_delete_my_devices, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            message.delete(LayerClient.DeletionMode.ALL_MY_DEVICES);
                         }
-                        builder.show();
-                    }
-                });
+                    });
+                }
+                builder.show();
+            }
+        });
+
+        mConversationViewModel = new ConversationViewModel(mMessageItemsListViewModel, App.getLayerClient());
 
         mActivityMessagesListBinding.setViewModel(mConversationViewModel);
         setConversation(conversation, conversation != null);
