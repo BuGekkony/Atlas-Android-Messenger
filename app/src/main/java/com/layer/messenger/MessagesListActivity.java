@@ -216,10 +216,9 @@ public class MessagesListActivity extends AppCompatActivity {
 
     private void setupConversation(Conversation conversation) {
         mConversationView = mActivityMessagesListBinding.conversation;
-        EmptyMessageListView emptyMessageListView = new EmptyMessageListView(this);
-        mConversationView.setEmptyListView(emptyMessageListView, emptyMessageListView.getmEmptyTextViewResourceId());
+        View emptyMessageListView = new EmptyMessageListView(this);
+        mConversationView.setEmptyListView(emptyMessageListView);
 
-        View emptyMessageView = new EmptyMessageListView(this);
         mMessageItemsListViewModel = new MessageItemsListViewModel(this, App.getLayerClient(),
                 Util.getImageCacheWrapper(), Util.getDateFormatter(this),
                 Util.getIdentityFormatter(this));
